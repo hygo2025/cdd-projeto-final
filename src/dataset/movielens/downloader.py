@@ -17,9 +17,9 @@ class Downloader:
             os.makedirs(self.extract_folder)
 
     def download_file(self, url, save_path):
+        print(f"Iniciando download de: {url}")
         response = requests.get(url, stream=True)
         total = int(response.headers.get('content-length', 0))
-        print(f"Iniciando download de {url}")
         with open(save_path, "wb") as file:
             downloaded = 0
             for data in response.iter_content(chunk_size=1024):
@@ -27,7 +27,7 @@ class Downloader:
                 downloaded += len(data)
                 if total:
                     percent = downloaded / total * 100
-                    print(f"\rProgresso: {percent:.2f}%")
+                    print(f"\rProgresso: {percent:.2f}%", end="")
             print("\nDownload concluído.")
 
     @staticmethod
