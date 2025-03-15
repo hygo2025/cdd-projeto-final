@@ -11,3 +11,12 @@ class MovieLensType(Enum):
     MOVIES = "movies.csv"
     RATINGS = "ratings.csv"
     TAGS = "tags.csv"
+
+class SimilarityType(Enum):
+    COCCURRENCE = "cooccurrence"
+    COSINE = "cosine"
+    INCLUSION_INDEX = "inclusion index"
+    JACCARD = "jaccard"
+    LEXICOGRAPHERS_MUTUAL_INFORMATION = "lexicographers mutual information"
+    LIFT = "lift"
+    MUTUAL_INFORMATION = "mutual information"

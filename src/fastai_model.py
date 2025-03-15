@@ -3,6 +3,7 @@ from fastai.tabular.all import *
 from fastai.collab import *
 from sklearn.model_selection import train_test_split
 
+from src.abstract_model import AbstractModel
 from src.utils.enums import MovieLensDataset, MovieLensType
 from src.dataset.movielens.loader import Loader
 
@@ -13,10 +14,13 @@ from recommenders.evaluation.python_evaluation import rmse, mae, rsquared, exp_v
 from recommenders.models.fastai.fastai_utils import cartesian_product, score
 
 
-
-
-class FastAiModel:
+class FastAiModel(AbstractModel):
     def __init__(self, dataset: MovieLensDataset, n_factors: int, test_size: float, epochs: int, top_k: int, seed: int):
+        super().__init__(
+            dataset = dataset,
+            model_name=f"movielens_model_n_factors_{n_factors}_epochs_{epochs}_.pkl"
+        )
+
         self.seed = seed
         self.n_factors = n_factors
         self.dataset = dataset
@@ -25,22 +29,16 @@ class FastAiModel:
         self.top_k = top_k
         self.rating_range = [0, 5.5]
 
-        self.df = self._prepare_data()
+        self.df = self.prepare_data_pandas([d.idf_user, d.idf_item, d.idf_rating, d.idf_title])
         self.train_df, self.test_df = train_test_split(self.df, test_size=self.test_size, random_state=self.seed)
 
         self.test_df = self.test_df[self.test_df[d.idf_user].isin(self.train_df[d.idf_user])]
 
-        self.model_name = f"movielens_model_n_factors_{n_factors}_epochs_{epochs}_.pkl"
 
     def _prepare(self):
         np.random.seed(self.seed)
         torch.manual_seed(self.seed)
         torch.cuda.manual_seed_all(self.seed)
-
-    def _prepare_data(self) -> pd.DataFrame:
-        df_ratings = Loader().load_pandas(dataset=self.dataset, ml_type= MovieLensType.RATINGS)
-        df_movies = Loader().load_pandas(dataset=self.dataset, ml_type= MovieLensType.MOVIES)
-        return df_ratings.merge(df_movies, on=d.idf_item)[[d.idf_user, d.idf_item, d.idf_rating, d.idf_title]]
 
     def train(self):
         self._prepare()
@@ -107,33 +105,10 @@ class FastAiModel:
             'prediction': 'float64'
         })
 
-        eval_map = map(self.test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
-                       col_rating=d.idf_rating, col_prediction=d.idf_prediction,
-                       relevancy_method="top_k", k=self.top_k)
+        metrics_at_k = self.at_k_metrics(test_df=self.test_df, top_k=self.top_k, predictions_df=predictions_df)
+        metrics = self.metrics(test_df=self.test_df, predictions_df=predictions_df)
 
-        eval_ndcg = ndcg_at_k(self.test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
-                              col_rating=d.idf_rating, col_prediction=d.idf_prediction,
-                              relevancy_method="top_k", k=self.top_k)
-        eval_precision = precision_at_k(self.test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
-                                        col_rating=d.idf_rating, col_prediction=d.idf_prediction,
-                                        relevancy_method="top_k", k=self.top_k)
-        eval_recall = recall_at_k(self.test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
-                                  col_rating=d.idf_rating, col_prediction=d.idf_prediction,
-                                  relevancy_method="top_k", k=self.top_k)
-
-        eval_r2 = rsquared(self.test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item, col_rating=d.idf_rating, col_prediction=d.idf_prediction)
-        eval_rmse = rmse(self.test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item, col_rating=d.idf_rating, col_prediction=d.idf_prediction)
-        eval_mae = mae(self.test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item, col_rating=d.idf_rating, col_prediction=d.idf_prediction)
-        eval_exp_var = exp_var(self.test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item, col_rating=d.idf_rating,
-                               col_prediction=d.idf_prediction)
-        results_dict = {
-            "Metric": ["MAP", "nDCG@K", "Precision@K", "Recall@K", "R2", "RMSE", "MAE", "Explained Variance"],
-            "Value": [eval_map, eval_ndcg, eval_precision, eval_recall, eval_r2, eval_rmse, eval_mae, eval_exp_var]
-        }
-
-        results_df = pd.DataFrame(results_dict)
-
-        return results_df
+        return pd.concat([metrics_at_k, metrics], axis=1)
 
     def save(self, learn):
         model_path = self._get_model_path()
@@ -151,7 +126,7 @@ class FastAiModel:
 
 if __name__ == '__main__':
     model = FastAiModel(dataset=MovieLensDataset.ML_100K, n_factors=42, test_size=0.2, epochs=1, top_k=10, seed=42)
-    # model.train()
+    model.train()
     # model.predict()
     result = model.evaluate()
     print(result)

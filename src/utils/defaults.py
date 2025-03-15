@@ -20,3 +20,14 @@ seed = 42
 # Similarity
 idf_cosine = "cosine_similarity"
 idf_cooccurrence = "cooccurrence"
+
+
+# Metrics
+idf_map = "MAP"
+idf_ndcg = "nDCG@K"
+idf_precision = "Precision@K"
+idf_recall = "Recall@K"
+idf_r2 = "R2"
+idf_rmse = "RMSE"
+idf_mae = "MAE"
+idf_exp_var = "Explained Variance"

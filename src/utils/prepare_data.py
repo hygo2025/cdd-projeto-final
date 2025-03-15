@@ -102,17 +102,17 @@ def process_data(links_path, movies_metadata_path, ratings_path, output_path):
 
 if __name__ == '__main__':
     print("Processing small data...")
-    links_small_path = '../data/imdb_movielens/links_small.csv'
-    movies_metadata_path = '../data/imdb_movielens/movies_metadata.csv'
-    ratings_small_path = '../data/imdb_movielens/ratings_small.csv'
+    links_small_path = '../../data/imdb_movielens/links_small.csv'
+    movies_metadata_path = '../../data/imdb_movielens/movies_metadata.csv'
+    ratings_small_path = '../../data/imdb_movielens/ratings_small.csv'
     output_small_path = '../data/imdb_movielens/small_data.csv'
 
     process_data(links_small_path, movies_metadata_path, ratings_small_path, output_small_path)
 
     print("Processing full data...")
-    links_path = '../data/imdb_movielens/links.csv'
-    movies_metadata_path = '../data/imdb_movielens/movies_metadata.csv'
-    ratings_path = '../data/imdb_movielens/ratings.csv'
+    links_path = '../../data/imdb_movielens/links.csv'
+    movies_metadata_path = '../../data/imdb_movielens/movies_metadata.csv'
+    ratings_path = '../../data/imdb_movielens/ratings.csv'
     output_full_path = '../data/imdb_movielens/full_data.csv'
 
     process_data(links_path, movies_metadata_path, ratings_path, output_full_path)
