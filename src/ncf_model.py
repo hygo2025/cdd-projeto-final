@@ -55,8 +55,7 @@ class NcfModel(AbstractModel):
         self.test_df = self.test_df[self.test_df[d.idf_user].isin(self.train_df[d.idf_user].unique())]
         self.test_df = self.test_df[self.test_df[d.idf_item].isin(self.train_df[d.idf_item].unique())]
 
-    def train(self):
-        td = get_torch_device()
+    def _build_model(self):
         data = NCFDataset(train_file=self.save_to_tmp_file(df=self.train_df, save_dir='ncf', name='train.csv'),
                           test_file=self.save_to_tmp_file(df=self.test_df, save_dir='ncf', name='test.csv'),
                           col_user=d.idf_user,
@@ -74,14 +73,15 @@ class NcfModel(AbstractModel):
             verbose=10,
             seed=self.seed
         )
-
-
-
+        return model, data
+    def train(self):
+        model, data = self._build_model()
         model.fit(data)
         self.save(model)
+        return model
 
     def predict(self):
-        model = self.load()
+        model = self.train()
 
         users, items, preds = [], [], []
         item = list(self.train_df[d.idf_item].unique())
@@ -104,19 +104,21 @@ class NcfModel(AbstractModel):
         return metrics_at_k
 
     def save(self, model: NCF):
-        model_path = self.get_path('sar')
+        model_path = self.get_path('ncf')
         model.save(model_path)
         print(f"Model saved to {model_path}")
 
     def load(self) -> NCF:
-        model_path = self.get_path('sar')
-        model = NCF.load(model_path)
+        #TODO: Essa funcao nao esta funcionando corretamente
+        model_path = self.get_path('ncf')
+        model, _ = self._build_model()
+        model.load(neumf_dir=model_path)
         return model
 
 
 if __name__ == '__main__':
     model = NcfModel(
-        dataset=MovieLensDataset.ML_100K,
+        dataset=MovieLensDataset.ML_1M,
         n_factors=42,
         batch_size=256,
         lr=1e-3,
@@ -125,7 +127,7 @@ if __name__ == '__main__':
         top_k=10,
         test_size=0.2,
         seed=42)
-    model.train()
+    # model.train()
     # model.predict()
     result = model.evaluate()
     print(result)

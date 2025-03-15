@@ -82,8 +82,10 @@ class Loader:
             if not os.path.exists(file_path):
                 raise FileNotFoundError(f"O arquivo {file_path} não foi encontrado mesmo após o download.")
 
-        if dataset == MovieLensDataset.ML_1M and ml_type == MovieLensType.RATINGS:  # TODO: Implementar o resto dos tipos
-            df = pd.read_csv(file_path, sep="::", engine="python", names=["userId", "movieId", "rating", "timestamp"])
+        if dataset == MovieLensDataset.ML_1M and ml_type == MovieLensType.RATINGS:
+            df = pd.read_csv(file_path, sep="::", engine="python", names=["userId", "movieId", "rating", "timestamp"], encoding='ISO-8859-1')
+        elif dataset == MovieLensDataset.ML_1M and ml_type == MovieLensType.MOVIES:
+            df = pd.read_csv(file_path, sep="::", engine="python", names=["movieId", "title", "genres"], encoding='ISO-8859-1')
         else:
             df = pd.read_csv(file_path)
         return define_schema_pandas(df, ml_type)
