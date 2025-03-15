@@ -131,12 +131,13 @@ class NcfModel(AbstractModel):
         print(f"Modelo salvo em: {model_path}")
 
     def load(self) -> NCF:
-        print("Carregando o modelo...")
-        model_path = self.get_path('ncf')
-        model, _ = self._build_model()
-        model.load(neumf_dir=model_path)
-        print("Modelo carregado.")
-        return model
+        pass
+        # print("Carregando o modelo...")
+        # model_path = self.get_path('ncf')
+        # model, _ = self._build_model()
+        # model.load(neumf_dir=model_path)
+        # print("Modelo carregado.")
+        # return model
 
 
 if __name__ == '__main__':
