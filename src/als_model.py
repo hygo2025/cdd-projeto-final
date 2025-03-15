@@ -86,12 +86,12 @@ class SparkAlsModel(AbstractModel):
         return pd.concat([ranking_metrics, rating_metrics], axis=1)
 
     def save(self, model: ALSModel):
-        model_path = self.get_model_path('als')
+        model_path = self.get_path('als')
         model.write().overwrite().save(model_path)
         print(f"Model saved to {model_path}")
 
     def load(self) -> ALSModel:
-        model_path = self.get_model_path('als')
+        model_path = self.get_path('als')
         return ALSModel.load(model_path)
 
 

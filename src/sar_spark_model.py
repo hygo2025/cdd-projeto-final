@@ -72,12 +72,12 @@ class SarModel(AbstractModel):
         return self.at_k_metrics(test_df=self.test_df, top_k=self.top_k, predictions_df=predictions_df)
 
     def save(self, model: SAR):
-        model_path = self.get_model_path('sar')
+        model_path = self.get_path('sar')
         joblib.dump(value=model, filename=model_path)
         print(f"Model saved to {model_path}")
 
     def load(self) -> SAR:
-        model_path = self.get_model_path('sar')
+        model_path = self.get_path('sar')
         model = joblib.load(model_path)
         return model
 

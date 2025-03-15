@@ -29,6 +29,11 @@ class AbstractModel(ABC):
     def evaluate(self):
         pass
 
+    def save_to_tmp_file(self, df: pd.DataFrame, save_dir:str, name: str):
+        file_location = self.get_path(save_dir=save_dir, data_path='data/tmp', name=name)
+        df.to_csv(self.get_path(save_dir=save_dir, data_path = 'data/tmp', name=name), index=False)
+        return file_location
+
     def prepare_data_pandas(self, columns: List[str]) -> pd.DataFrame:
         loader = Loader()
         df_ratings = loader.load_pandas(dataset=self.dataset, ml_type=MovieLensType.RATINGS)
@@ -44,9 +49,11 @@ class AbstractModel(ABC):
             .select(columns)
         return df
 
-    def get_model_path(self, save_dir):
-        save_dir = os.path.join('..', 'data', save_dir)
+    def get_path(self, save_dir, data_path: str = 'data', name: str = None):
+        save_dir = os.path.join('..', data_path, save_dir)
         os.makedirs(save_dir, exist_ok=True)
+        if name:
+            return os.path.join(save_dir, name)
         return os.path.join(save_dir, self.model_name)
 
     def map_at_k(self, test_df, top_k, predictions_df):

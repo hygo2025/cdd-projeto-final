@@ -110,18 +110,15 @@ class FastAiModel(AbstractModel):
         return pd.concat([metrics_at_k, metrics], axis=1)
 
     def save(self, learn):
-        model_path = self._get_model_path()
+        model_path = self.get_path('fastai')
         learn.export(model_path)
         print(f"Modelo exportado com sucesso em {model_path}")
 
     def load(self):
-        model_path = self._get_model_path()
+        model_path = self.get_path('fastai')
         return load_learner(model_path)
 
-    def _get_model_path(self):
-        save_dir = os.path.join('..', 'data', 'fastai')
-        os.makedirs(save_dir, exist_ok=True)
-        return os.path.join(save_dir, self.model_name)
+
 
 
 if __name__ == '__main__':
