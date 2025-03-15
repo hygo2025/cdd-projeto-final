@@ -2,6 +2,7 @@ from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 from src.utils import defaults as d
 
+
 def cooccurrence_matrix(df: DataFrame, threshold: int) -> DataFrame:
     """
     Calcula a matriz de co-ocorrência a partir do DataFrame de interações.

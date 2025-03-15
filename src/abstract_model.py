@@ -49,7 +49,6 @@ class AbstractModel(ABC):
         os.makedirs(save_dir, exist_ok=True)
         return os.path.join(save_dir, self.model_name)
 
-
     def map_at_k(self, test_df, top_k, predictions_df):
         return map_at_k(test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
                         col_rating=d.idf_rating, col_prediction=d.idf_prediction,
@@ -57,26 +56,26 @@ class AbstractModel(ABC):
 
     def ndcg_at_k(self, test_df, top_k, predictions_df):
         return ndcg_at_k(test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
-                          col_rating=d.idf_rating, col_prediction=d.idf_prediction,
-                          relevancy_method="top_k", k=top_k)
+                         col_rating=d.idf_rating, col_prediction=d.idf_prediction,
+                         relevancy_method="top_k", k=top_k)
 
     def precision_at_k(self, test_df, top_k, predictions_df):
         return precision_at_k(test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
-                                    col_rating=d.idf_rating, col_prediction=d.idf_prediction,
-                                    relevancy_method="top_k", k=top_k)
-
-    def recall_at_k(self, test_df, top_k, predictions_df):
-        return recall_at_k(test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
                               col_rating=d.idf_rating, col_prediction=d.idf_prediction,
                               relevancy_method="top_k", k=top_k)
 
+    def recall_at_k(self, test_df, top_k, predictions_df):
+        return recall_at_k(test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
+                           col_rating=d.idf_rating, col_prediction=d.idf_prediction,
+                           relevancy_method="top_k", k=top_k)
+
     def rsquared(self, test_df, predictions_df):
         return rsquared(test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item, col_rating=d.idf_rating,
-                       col_prediction=d.idf_prediction)
+                        col_prediction=d.idf_prediction)
 
     def rmse(self, test_df, predictions_df):
         return rmse(test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item, col_rating=d.idf_rating,
-                     col_prediction=d.idf_prediction)
+                    col_prediction=d.idf_prediction)
 
     def mae(self, test_df, predictions_df):
         return mae(test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item, col_rating=d.idf_rating,
@@ -94,8 +93,6 @@ class AbstractModel(ABC):
             d.idf_recall: [self.recall_at_k(test_df, top_k, predictions_df)]
         })
 
-
-
     def metrics(self, test_df, predictions_df) -> pd.DataFrame:
         return pd.DataFrame({
             d.idf_r2: [self.rmse(test_df, predictions_df)],
@@ -104,15 +101,14 @@ class AbstractModel(ABC):
             d.idf_exp_var: [self.rsquared(test_df, predictions_df)]
         })
 
-
     def spark_ranking_evaluation(self, test_df, top_k, predictions_df):
         return SparkRankingEvaluation(test_df, predictions_df, k=top_k, col_user=d.idf_user, col_item=d.idf_item,
-                                      col_rating=d.idf_rating, col_prediction=d.idf_prediction, relevancy_method="top_k")
+                                      col_rating=d.idf_rating, col_prediction=d.idf_prediction,
+                                      relevancy_method="top_k")
 
     def spark_rating_evaluation(self, test_df, predictions_df):
         return SparkRatingEvaluation(test_df, predictions_df, col_user=d.idf_user, col_item=d.idf_item,
-                                      col_rating=d.idf_rating, col_prediction=d.idf_prediction)
-
+                                     col_rating=d.idf_rating, col_prediction=d.idf_prediction)
 
     def spark_ranking_metrics(self, test_df, top_k, predictions_df) -> pd.DataFrame:
         ranking_eval = self.spark_ranking_evaluation(test_df, top_k, predictions_df)

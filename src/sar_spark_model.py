@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 from pyspark.sql import DataFrame
@@ -16,13 +15,13 @@ from src.utils import defaults as d
 class SarModel(AbstractModel):
     def __init__(self,
                  dataset: MovieLensDataset,
-                 top_k:int,
+                 top_k: int,
                  validate_size: float,
                  time_decay_coefficient: int,
-                 similarity_type:SimilarityType,
-                 seed:int):
+                 similarity_type: SimilarityType,
+                 seed: int):
         super().__init__(
-            dataset = dataset,
+            dataset=dataset,
             model_name=f"movielens_sar_model_time_decay_coefficient_{time_decay_coefficient}_similarity_type_{similarity_type}_top_k_{top_k}.model"
         )
 
@@ -38,9 +37,8 @@ class SarModel(AbstractModel):
 
         # Divide os dados em treino e teste
         self.train_df, self.test_df = python_stratified_split(
-            self.df, ratio=1-validate_size, col_user=d.idf_user, col_item=d.idf_item, seed=seed
+            self.df, ratio=1 - validate_size, col_user=d.idf_user, col_item=d.idf_item, seed=seed
         )
-
 
     def train(self):
         model = SAR(
@@ -82,6 +80,7 @@ class SarModel(AbstractModel):
         model_path = self.get_model_path('sar')
         model = joblib.load(model_path)
         return model
+
 
 if __name__ == '__main__':
     model = SarModel(

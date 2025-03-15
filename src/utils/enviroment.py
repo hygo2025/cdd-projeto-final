@@ -15,5 +15,6 @@ def is_local():
 def is_env_prod():
     return settings.ENV == "prod"
 
+
 def runner_type():
     return settings.get("RUNNER_TYPE", "").lower()

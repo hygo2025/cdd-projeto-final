@@ -17,7 +17,7 @@ from recommenders.models.fastai.fastai_utils import cartesian_product, score
 class FastAiModel(AbstractModel):
     def __init__(self, dataset: MovieLensDataset, n_factors: int, test_size: float, epochs: int, top_k: int, seed: int):
         super().__init__(
-            dataset = dataset,
+            dataset=dataset,
             model_name=f"movielens_model_n_factors_{n_factors}_epochs_{epochs}_.pkl"
         )
 
@@ -34,7 +34,6 @@ class FastAiModel(AbstractModel):
 
         self.test_df = self.test_df[self.test_df[d.idf_user].isin(self.train_df[d.idf_user])]
 
-
     def _prepare(self):
         np.random.seed(self.seed)
         torch.manual_seed(self.seed)
@@ -42,7 +41,8 @@ class FastAiModel(AbstractModel):
 
     def train(self):
         self._prepare()
-        data = CollabDataLoaders.from_df(self.train_df, user_name=d.idf_user, item_name=d.idf_item, rating_name=d.idf_rating, valid_pct=0)
+        data = CollabDataLoaders.from_df(self.train_df, user_name=d.idf_user, item_name=d.idf_item,
+                                         rating_name=d.idf_rating, valid_pct=0)
         learn = collab_learner(data, n_factors=self.n_factors, y_range=self.rating_range, wd=1e-1)
         learn.fit_one_cycle(self.epochs, lr_max=5e-3)
         self.save(learn)
@@ -95,7 +95,6 @@ class FastAiModel(AbstractModel):
 
         return top_k_scores
 
-
     def evaluate(self):
         predictions_df = self.predict()
 
@@ -123,6 +122,7 @@ class FastAiModel(AbstractModel):
         save_dir = os.path.join('..', 'data', 'fastai')
         os.makedirs(save_dir, exist_ok=True)
         return os.path.join(save_dir, self.model_name)
+
 
 if __name__ == '__main__':
     model = FastAiModel(dataset=MovieLensDataset.ML_100K, n_factors=42, test_size=0.2, epochs=1, top_k=10, seed=42)

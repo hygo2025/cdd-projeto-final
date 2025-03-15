@@ -5,8 +5,10 @@ from src.utils.enviroment import is_local
 
 from datetime import datetime, timedelta
 
+
 def now_sub_days(subtract_days: int = 1) -> datetime:
     return datetime.now() - timedelta(days=subtract_days)
+
 
 def _create_spark_session(name: str) -> SparkSession:
     if is_local():

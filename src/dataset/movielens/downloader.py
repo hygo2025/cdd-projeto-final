@@ -85,5 +85,3 @@ class Downloader:
     def download_and_extract_all(self):
         for dataset in MovieLensDataset:
             self.download_and_extract_dataset(dataset)
-
-

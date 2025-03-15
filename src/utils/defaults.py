@@ -9,7 +9,6 @@ idf_genres = "genres"
 # Predictions df columns:
 idf_prediction = "prediction"
 
-
 # Filtering variables
 default_k = 10
 default_threshold = 10
@@ -20,7 +19,6 @@ seed = 42
 # Similarity
 idf_cosine = "cosine_similarity"
 idf_cooccurrence = "cooccurrence"
-
 
 # Metrics
 idf_map = "MAP"

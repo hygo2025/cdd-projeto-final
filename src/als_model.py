@@ -15,9 +15,9 @@ class SparkAlsModel(AbstractModel):
     def __init__(self, spark: SparkSession, dataset: MovieLensDataset, rank: int, max_iter: int,
                  reg_param: float, validate_size: float, top_k: int, seed: int):
         super().__init__(
-            dataset = dataset,
+            dataset=dataset,
             model_name=f"movielens_als_model_rank_{rank}_maxiter_{max_iter}.model",
-            spark = spark
+            spark=spark
         )
 
         self.model = None
@@ -74,7 +74,6 @@ class SparkAlsModel(AbstractModel):
         top_all = dfs_pred_exclude_train.filter(dfs_pred_exclude_train[f"train.{d.idf_rating}"].isNull()) \
             .select('pred.' + d.idf_user, 'pred.' + d.idf_item, 'pred.' + d.idf_prediction)
 
-
         return top_all
 
     def evaluate(self):
@@ -86,7 +85,6 @@ class SparkAlsModel(AbstractModel):
 
         return pd.concat([ranking_metrics, rating_metrics], axis=1)
 
-
     def save(self, model: ALSModel):
         model_path = self.get_model_path('als')
         model.write().overwrite().save(model_path)
@@ -95,6 +93,7 @@ class SparkAlsModel(AbstractModel):
     def load(self) -> ALSModel:
         model_path = self.get_model_path('als')
         return ALSModel.load(model_path)
+
 
 if __name__ == '__main__':
     spark = create_spark_session("ALS")
