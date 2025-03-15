@@ -1,5 +1,8 @@
 pandas
 numpy
+pyspark
+recommenders
+dynaconf
 tqdm
 requests
 fastai==2.7.19
