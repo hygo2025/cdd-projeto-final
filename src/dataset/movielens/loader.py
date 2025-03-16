@@ -62,6 +62,9 @@ class Loader:
         self.spark = spark
 
     def _get_file_path(self, dataset: MovieLensDataset, ml_type: MovieLensType) -> str:
+        print(self.extract_folder)
+        print(dataset.name)
+
         dataset_folder = os.path.join(self.extract_folder, dataset.name)
         file_name = ml_type.value
         if dataset == MovieLensDataset.ML_1M:
