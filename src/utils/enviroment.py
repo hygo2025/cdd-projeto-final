@@ -2,10 +2,11 @@ from datetime import datetime, date
 from typing import Optional
 
 from config import settings
+import os
 
 
 def env():
-    return settings.ENV
+    return settings.get("ENV", os.environ.get("ENV"))
 
 
 def is_local():

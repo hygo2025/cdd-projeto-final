@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 
 from config import settings
 from src.utils.enviroment import is_local
-
+import os
 from datetime import datetime, timedelta
 
 
@@ -18,12 +18,12 @@ def _create_spark_session(name: str) -> SparkSession:
                 "spark.hadoop.fs.s3a.aws.credentials.provider",
                 "com.amazonaws.auth.DefaultAWSCredentialsProviderChain",
             )
-            .config("spark.executor.memory", settings.SPARK_EXECUTOR_MEMORY)
-            .config("spark.driver.memory", settings.SPARK_DRIVER_MEMORY)
-            .config("spark.memory.fraction", settings.SPARK_MEMORY_FRACTION)
-            .config("spark.driver.extraClassPath", settings.SPARK_DRIVER_EXTRACLASSPATH)
-            .config("spark.executor.extraClassPath", settings.SPARK_EXECUTOR_EXTRACLASSPATH)
-            .config("spark.serializer", settings.SPARK_SERIALIZER)
+            .config("spark.executor.memory", settings.get("SPARK_EXECUTOR_MEMORY", os.environ.get("SPARK_EXECUTOR_MEMORY")))
+            .config("spark.driver.memory", settings.get("SPARK_DRIVER_MEMORY", os.environ.get("SPARK_DRIVER_MEMORY")))
+            .config("spark.memory.fraction", settings.get("SPARK_MEMORY_FRACTION", os.environ.get("SPARK_MEMORY_FRACTION")))
+            .config("spark.driver.extraClassPath", settings.get("SPARK_DRIVER_EXTRACLASSPATH", os.environ.get("SPARK_DRIVER_EXTRACLASSPATH")))
+            .config("spark.executor.extraClassPath", settings.get("SPARK_EXECUTOR_EXTRACLASSPATH", os.environ.get("SPARK_EXECUTOR_EXTRACLASSPATH")))
+            .config("spark.serializer", settings.get("SPARK_SERIALIZER", os.environ.get("SPARK_SERIALIZER")))
             .config("spark.hadoop.fs.s3a.aws.profile", "default")
             .config("spark.sql.warnings", "false")
             .config("spark.sql.broadcastTimeout", "1200")
