@@ -8,6 +8,7 @@ import pandas as pd
 from src.utils import defaults as d
 from src.dataset.movielens.downloader import Downloader
 from src.utils.enums import MovieLensType, MovieLensDataset
+from config import settings
 
 
 def load_schema(ml_type: MovieLensType) -> Optional[StructType]:
@@ -53,7 +54,9 @@ def define_schema_pandas(df: pd.DataFrame, ml_type: MovieLensType) -> pd.DataFra
 
 
 class Loader:
-    def __init__(self, spark: SparkSession = None, download_folder="/tmp/dataset", extract_folder="/tmp/dataset"):
+    def __init__(self, spark: SparkSession = None,
+                 download_folder=settings.get("DOWNLOAD_FOLDER", os.environ.get("DOWNLOAD_FOLDER")),
+                 extract_folder=settings.get("DOWNLOAD_FOLDER", os.environ.get("DOWNLOAD_FOLDER"))):
         self.extract_folder = extract_folder
         self.download_folder = download_folder
         self.spark = spark

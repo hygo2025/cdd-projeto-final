@@ -4,10 +4,12 @@ import requests
 import zipfile
 
 from src.utils.enums import MovieLensDataset
-
+from config import settings
 
 class Downloader:
-    def __init__(self, download_folder="/tmp/dataset", extract_folder="/tmp/dataset"):
+    def __init__(self,
+                 download_folder=settings.get("DOWNLOAD_FOLDER", os.environ.get("DOWNLOAD_FOLDER")),
+                 extract_folder=settings.get("DOWNLOAD_FOLDER", os.environ.get("DOWNLOAD_FOLDER"))                 ):
         self.download_folder = download_folder
         self.extract_folder = extract_folder
 
