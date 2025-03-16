@@ -10,11 +10,11 @@ def env():
 
 
 def is_local():
-    return settings.ENV == "dev"
+    return env() == "dev"
 
 
 def is_env_prod():
-    return settings.ENV == "prod"
+    return env() == "prod"
 
 
 def runner_type():
