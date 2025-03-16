@@ -12,7 +12,7 @@ from src.utils.spark_session_utils import create_spark_session
 
 class SparkAlsModel(AbstractModel):
     def __init__(self, spark: SparkSession, dataset: MovieLensDataset, rank: int, max_iter: int,
-                 reg_param: float, validate_size: float, top_k: int, seed: int):
+                 reg_param: float, alpha:float, validate_size: float, top_k: int, seed: int):
         print("Inicializando SparkAlsModel...")
         super().__init__(
             dataset=dataset,
@@ -26,6 +26,7 @@ class SparkAlsModel(AbstractModel):
         self.max_iter = max_iter
         self.reg_param = reg_param
         self.top_k = top_k
+        self.alpha = alpha
         self.seed = seed
 
         print("Carregando e preparando os dados com prepare_data_spark...")
@@ -49,6 +50,7 @@ class SparkAlsModel(AbstractModel):
             maxIter=self.max_iter,
             rank=self.rank,
             regParam=self.reg_param,
+            alpha=self.alpha,
             userCol=d.idf_user,
             itemCol=d.idf_item,
             ratingCol=d.idf_rating,
@@ -57,12 +59,11 @@ class SparkAlsModel(AbstractModel):
         )
         self.model = als.fit(self.train_df)
         print("Treinamento concluído. Salvando o modelo...")
-        self.save(self.model)
-        print("Modelo ALS treinado e salvo com sucesso.\n")
+        return self.model
 
     def predict(self) -> DataFrame:
         print("Iniciando predição com o modelo ALS...")
-        model = self.load()
+        model = self.train()
         print("Obtendo usuários e itens distintos do conjunto de treino...")
         users = self.train_df.select(d.idf_user).distinct()
         items = self.train_df.select(d.idf_item).distinct()
@@ -118,8 +119,9 @@ if __name__ == '__main__':
         spark=spark,
         dataset=MovieLensDataset.ML_100K,
         rank=10,
-        max_iter=15,
+        max_iter=20,
         reg_param=0.05,
+        alpha=0.1,
         validate_size=0.25,
         top_k=10,
         seed=42

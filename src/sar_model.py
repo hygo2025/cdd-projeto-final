@@ -62,7 +62,7 @@ class SarModel(AbstractModel):
 
     def predict(self) -> DataFrame:
         print("Iniciando o processo de predição com o modelo SAR...")
-        model = self.load()
+        model = self.train()
         print("Gerando recomendações (removendo itens já vistos)...")
         top_all = model.recommend_k_items(self.train_df, top_k=self.top_k, remove_seen=True)
 

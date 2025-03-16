@@ -142,7 +142,7 @@ class FastAiModel(AbstractModel):
 
 if __name__ == '__main__':
     print("Executando FastAiModel...")
-    model = FastAiModel(dataset=MovieLensDataset.ML_100K, n_factors=42, test_size=0.2, epochs=1, top_k=10, seed=42)
+    model = FastAiModel(dataset=MovieLensDataset.ML_1M, n_factors=40, test_size=0.25, epochs=1, top_k=10, seed=42)
     print("Treinando modelo FastAi...")
     model.train()
     print("Avaliando modelo FastAi...")
