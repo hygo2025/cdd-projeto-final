@@ -56,7 +56,7 @@ class SarModel(AbstractModel):
         )
         model.fit(self.train_df)
         print("Treinamento concluído. Salvando o modelo...")
-        self.save(model)
+        # self.save(model)
         print("Modelo SAR treinado e salvo com sucesso.")
         return model
 

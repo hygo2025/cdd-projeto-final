@@ -78,7 +78,7 @@ class LightGcnModel(AbstractModel):
                                   )
         model = LightGCN(hparams, data, seed=self.seed)
         model.fit()
-        self.save(model)
+        # self.save(model)
         return model
 
     def predict(self):

@@ -57,7 +57,7 @@ class FastAiModel(AbstractModel):
         learn = collab_learner(data, n_factors=self.n_factors, y_range=self.rating_range, wd=1e-1)
         print("Iniciando o ciclo de treinamento...")
         learn.fit_one_cycle(self.epochs, lr_max=5e-3)
-        self.save(learn)
+        # self.save(learn)
         print("Treinamento concluído.\n")
         return learn
 

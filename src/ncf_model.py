@@ -92,7 +92,7 @@ class NcfModel(AbstractModel):
         model, data = self._build_model()
         model.fit(data)
         print("Treinamento concluído. Salvando o modelo...")
-        self.save(model)
+        # self.save(model)
         return model
 
     def predict(self):
