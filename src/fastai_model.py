@@ -121,11 +121,8 @@ class FastAiModel(AbstractModel):
         })
         print("Calculando métricas de avaliação (top K)...")
         metrics_at_k = self.at_k_metrics(test_df=self.test_df, top_k=self.top_k, predictions_df=predictions_df)
-        print("Calculando métricas adicionais...")
-        metrics = self.metrics(test_df=self.test_df, predictions_df=predictions_df)
         print("Avaliação concluída.\n")
-        results = pd.concat([metrics_at_k, metrics], axis=1)
-        return results
+        return metrics_at_k
 
     def save(self, learn):
         model_path = self.get_path('fastai')

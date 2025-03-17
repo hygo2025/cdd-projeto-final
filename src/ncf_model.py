@@ -143,7 +143,7 @@ class NcfModel(AbstractModel):
 if __name__ == '__main__':
     model = NcfModel(
         dataset=MovieLensDataset.ML_1M,
-        n_factors=42,
+        n_factors=4,
         batch_size=256,
         lr=1e-3,
         layer_sizes=[16, 8, 4],

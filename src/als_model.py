@@ -73,17 +73,34 @@ class SparkAlsModel(AbstractModel):
         dfs_pred = model.transform(user_item)
 
         print("Removendo itens já vistos (presentes no treino)...")
-        dfs_pred_exclude_train = dfs_pred.alias("pred").join(
-            self.train_df.alias("train"),
-            (col("pred." + d.idf_user) == col("train." + d.idf_user)) &
-            (col("pred." + d.idf_item) == col("train." + d.idf_item)),
+        # Renomeia as colunas relevantes de dfs_pred e train_df
+        pred_df = dfs_pred.withColumnRenamed(d.idf_user, "pred_user") \
+            .withColumnRenamed(d.idf_item, "pred_item")
+        train_df = self.train_df.withColumnRenamed(d.idf_user, "train_user") \
+            .withColumnRenamed(d.idf_item, "train_item")
+
+        pred_df.cache()
+        train_df.cache()
+
+        # Realiza o join utilizando as novas colunas
+        dfs_pred_exclude_train = pred_df.join(
+            train_df,
+            (col("pred_user") == col("train_user")) & (col("pred_item") == col("train_item")),
             how='outer'
         )
-        top_all = dfs_pred_exclude_train.filter(
-            dfs_pred_exclude_train[f"train.{d.idf_rating}"].isNull()
-        ).select('pred.' + d.idf_user, 'pred.' + d.idf_item, 'pred.' + d.idf_prediction)
+
+        print(dfs_pred_exclude_train.show(5))
+
+        top_all2 = dfs_pred_exclude_train.filter(
+            dfs_pred_exclude_train[d.idf_rating].isNull()
+        ).select("pred_user", "pred_item", d.idf_prediction)
+
+        top_all2 = top_all2.withColumnRenamed("pred_user", d.idf_user) \
+            .withColumnRenamed("pred_item", d.idf_item)
+
+        print(top_all2.show(5))
         print("Predição concluída.\n")
-        return top_all
+        return top_all2
 
     def evaluate(self):
         print("Iniciando avaliação do modelo ALS...")
@@ -91,10 +108,8 @@ class SparkAlsModel(AbstractModel):
         predictions_df = self.predict()
         print("Calculando métricas de avaliação de ranking...")
         ranking_metrics = self.spark_ranking_metrics(self.test_df, self.top_k, predictions_df)
-        print("Calculando métricas de avaliação de rating...")
-        rating_metrics = self.spark_rating_metrics(self.test_df, predictions_df)
         print("Avaliação concluída.\n")
-        return pd.concat([ranking_metrics, rating_metrics], axis=1)
+        return ranking_metrics
 
     def save(self, model: ALSModel):
         model_path = self.get_path('als')
@@ -116,7 +131,7 @@ if __name__ == '__main__':
     print("Inicializando SparkAlsModel...")
     model = SparkAlsModel(
         spark=spark,
-        dataset=MovieLensDataset.ML_100K,
+        dataset=MovieLensDataset.ML_1M,
         rank=10,
         max_iter=20,
         reg_param=0.05,
@@ -126,7 +141,7 @@ if __name__ == '__main__':
         seed=42
     )
     print("Treinando modelo ALS...")
-    model.train()
+    # model.train()
     print("Avaliando modelo ALS...")
     result = model.evaluate()
     print("Resultados da avaliação:")
