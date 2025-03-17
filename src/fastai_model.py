@@ -65,7 +65,8 @@ class FastAiModel(AbstractModel):
         print("Iniciando processo de predição...")
         self._prepare()
         print("Carregando o modelo treinado...")
-        learner = self.load()
+        # learner = self.load()
+        learner = self.train()
 
         print("Obtendo usuários e itens conhecidos pelo modelo...")
         total_users, total_items = learner.dls.classes.values()
