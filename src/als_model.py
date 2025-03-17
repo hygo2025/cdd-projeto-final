@@ -75,8 +75,8 @@ class SparkAlsModel(AbstractModel):
         print("Removendo itens já vistos (presentes no treino)...")
         dfs_pred_exclude_train = dfs_pred.alias("pred").join(
             self.train_df.alias("train"),
-            (dfs_pred[d.idf_user] == self.train_df[d.idf_user]) &
-            (dfs_pred[d.idf_item] == self.train_df[d.idf_item]),
+            (col("pred." + d.idf_user) == col("train." + d.idf_user)) &
+            (col("pred." + d.idf_item) == col("train." + d.idf_item)),
             how='outer'
         )
         top_all = dfs_pred_exclude_train.filter(
@@ -107,7 +107,6 @@ class SparkAlsModel(AbstractModel):
         model = ALSModel.load(model_path)
         print("Modelo carregado com sucesso.\n")
         return model
-
 
 if __name__ == '__main__':
     print("Criando sessão Spark...")

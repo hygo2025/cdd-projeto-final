@@ -4,7 +4,7 @@ from fastai.collab import *
 from sklearn.model_selection import train_test_split
 
 from src.abstract_model import AbstractModel
-from src.utils.enums import MovieLensDataset, MovieLensType
+from src.utils.ms import MovieLensDataset, MovieLensType
 from src.dataset.movielens.loader import Loader
 
 from src.utils import defaults as d

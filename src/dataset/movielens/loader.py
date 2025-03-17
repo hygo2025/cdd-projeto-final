@@ -79,7 +79,7 @@ class Loader:
             downloader = Downloader(download_folder=self.download_folder, extract_folder=self.extract_folder)
             downloader.download_and_extract_dataset(dataset)
         else:
-            self.logger.info(f"Dataset {dataset.name} já existe em {dataset_folder}.")
+            print(f"Dataset {dataset.name} já existe em {dataset_folder}.")
 
     def load_pandas(self, dataset: MovieLensDataset, ml_type: MovieLensType) -> pd.DataFrame:
         file_path = self._get_file_path(dataset, ml_type)
@@ -107,8 +107,24 @@ class Loader:
 
         schema = load_schema(ml_type)
 
-        if schema is not None:
+        if schema is not None and dataset != MovieLensDataset.ML_1M:
             df = self.spark.read.csv(file_path, header=False, schema=schema)
+        elif dataset == MovieLensDataset.ML_1M and ml_type == MovieLensType.RATINGS:
+            df = self.spark.read.csv(
+                file_path,
+                sep="::",
+                header=False,
+                schema=schema,
+                encoding="ISO-8859-1"
+            )
+        elif dataset == MovieLensDataset.ML_1M and ml_type == MovieLensType.MOVIES:
+            df = self.spark.read.csv(
+                file_path,
+                sep="::",
+                header=False,
+                schema=schema,
+                encoding="ISO-8859-1"
+            )
         else:
             df = self.spark.read.csv(file_path, header=True, inferSchema=True)
 
