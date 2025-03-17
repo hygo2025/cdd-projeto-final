@@ -70,14 +70,16 @@ class LightGcnModel(AbstractModel):
                                   batch_size=self.batch_size,
                                   epochs=self.epochs,
                                   learning_rate=self.lr,
-                                  eval_epoch=5,
+                                  eval_epoch=20,
                                   top_k=self.top_k,
                                   save_model=True,
-                                  save_epoch=1,
                                   MODEL_DIR=f"{self.get_path('lightgcn')}/model",
                                   )
+        print("Iniciando o modelo...")
         model = LightGCN(hparams, data, seed=self.seed)
+        print("Treinando o modelo...")
         model.fit()
+        print("Modelo treinado.")
         # self.save(model)
         return model
 
