@@ -74,14 +74,18 @@ class SparkAlsModel(AbstractModel):
 
         print("Removendo itens já vistos (presentes no treino)...")
         # Renomeia as colunas relevantes de dfs_pred e train_df
+        print("Renomenado colunas...")
         pred_df = dfs_pred.withColumnRenamed(d.idf_user, "pred_user") \
             .withColumnRenamed(d.idf_item, "pred_item")
+        print("Renomenado colunas...")
         train_df = self.train_df.withColumnRenamed(d.idf_user, "train_user") \
             .withColumnRenamed(d.idf_item, "train_item")
 
+        print("Cacheando os DataFrames...")
         pred_df.cache()
         train_df.cache()
 
+        print("Iniciando join entre os DataFrames...")
         # Realiza o join utilizando as novas colunas
         dfs_pred_exclude_train = pred_df.join(
             train_df,
